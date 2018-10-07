@@ -41,7 +41,7 @@ before_script:
       for i in \$(ls bin/flb-rt* | egrep -v "\$SKIP_EXTERNAL|\$SKIP_BROKEN")
       do
         echo "===== <<\$(basename \$i)>> ====="
-        \$i
+        \$i |grep -q kube_systemd && \$i -s kube_systemd_logs || \$i
         if [ \$? -eq 0 ]
         then
           RES=PASS
