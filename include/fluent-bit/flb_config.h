@@ -85,6 +85,11 @@ struct flb_config {
      * absolute path for the directory that contains the file.
      */
     char *conf_path;
+    /*
+     * If true, inotify on the conf_path, and restart on change
+     */
+    int conf_watch;
+    flb_pipefd_t conf_change_fd;    /* Inotify fd associated to conf_watch */
 
     /* Event */
     struct mk_event event_flush;
@@ -210,6 +215,7 @@ enum conf_type {
 #define FLB_CONF_STR_BUF_PATH     "Buffer_Path"
 #define FLB_CONF_STR_BUF_WORKERS  "Buffer_Workers"
 #endif /*FLB_HAVE_BUFFERING*/
+#define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
 
 
 #endif
