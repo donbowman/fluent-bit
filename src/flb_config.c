@@ -92,6 +92,10 @@ struct flb_service_config service_configs[] = {
      offsetof(struct flb_config, buffer_workers)},
 #endif
 
+    {FLB_CONF_STR_CONFIG_WATCH,
+     FLB_CONF_TYPE_BOOL,
+     offsetof(struct flb_config, conf_watch)},
+
     {NULL, FLB_CONF_TYPE_OTHER, 0} /* end of array */
 };
 
