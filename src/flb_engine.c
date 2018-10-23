@@ -55,10 +55,6 @@
 #include <fluent-bit/flb_buffer_chunk.h>
 #endif
 
-#ifdef FLB_HAVE_STATS
-#include <fluent-bit/flb_stats.h>
-#endif
-
 int flb_engine_destroy_tasks(struct mk_list *tasks)
 {
     int c = 0;
@@ -391,6 +387,7 @@ int flb_engine_config_changed_handler(void *data)
 int flb_engine_start(struct flb_config *config)
 {
     int ret;
+    char tmp[16];
     struct mk_event *event;
     struct mk_event_loop *evl;
 
@@ -408,6 +405,12 @@ int flb_engine_start(struct flb_config *config)
     }
 
     flb_info("[engine] started (pid=%i)", getpid());
+
+    /* Debug coroutine stack size */
+    flb_utils_bytes_to_human_readable_size(FLB_THREAD_STACK_SIZE,
+                                           (char *) &tmp, sizeof(tmp));
+    flb_debug("[engine] coroutine stack size %lu (%s)",
+              FLB_THREAD_STACK_SIZE, tmp);
     flb_thread_prepare();
 
     /* Create the event loop and set it in the global configuration */
@@ -465,9 +468,6 @@ int flb_engine_start(struct flb_config *config)
         flb_error("[engine] scheduler could not start");
         return -1;
     }
-
-    /* Initialize the stats interface (just if FLB_HAVE_STATS is defined) */
-    flb_stats_init(config);
 
     /* Initialize collectors */
     flb_input_collectors_start(config);
