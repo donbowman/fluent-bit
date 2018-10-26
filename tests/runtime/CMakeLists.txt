@@ -41,7 +41,6 @@ endif()
 # Output Plugins
 if(FLB_IN_LIB)
   FLB_RT_TEST(FLB_OUT_LIB          "core_engine.c")
-  FLB_RT_TEST(FLB_OUT_LIB          "config_change.c")
   FLB_RT_TEST(FLB_OUT_COUNTER      "out_counter.c")
   FLB_RT_TEST(FLB_OUT_ES           "out_elasticsearch.c")
   FLB_RT_TEST(FLB_OUT_EXIT         "out_exit.c")
@@ -73,6 +72,7 @@ foreach(source_file ${CHECK_PROGRAMS})
     ${source_file_we}
     ${source_file}
     )
+  add_sanitizers(${source_file_we})
   target_link_libraries(${source_file_we}
     fluent-bit-static
     ${CMAKE_THREAD_LIBS_INIT}
