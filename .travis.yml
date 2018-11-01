@@ -9,6 +9,10 @@ compiler:
 env:
   - PASS=1
   - PASS=2
+#env:
+#  - FLB_MEM="-DFLB_JEMALLOC=On"
+#  - FLB_MEM="-DFLB_JEMALLOC=Off"
+#  - DO_DOCKER=1
 
 before_script:
 
