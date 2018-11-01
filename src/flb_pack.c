@@ -177,7 +177,9 @@ static char *tokens_to_msgpack(char *js,
  * This routine do not keep a state in the parser, do not use it for big
  * JSON messages.
  */
-int flb_pack_json(char *js, size_t len, char **buffer, size_t *size)
+int flb_pack_json(char *js, size_t len, char **buffer, size_t *size,
+                  int *root_type)
+
 {
     int ret = -1;
     int out;
@@ -206,6 +208,7 @@ int flb_pack_json(char *js, size_t len, char **buffer, size_t *size)
         goto flb_pack_json_end;
     }
 
+    *root_type = state.tokens[0].type;
     *size = out;
     *buffer = buf;
 
@@ -1177,7 +1180,7 @@ flb_sds_t flb_msgpack_to_gelf(flb_sds_t *s, msgpack_object *o,
                 if (full_message_key_found == FLB_TRUE) continue;
                 full_message_key_found = FLB_TRUE;
                 key = "full_message";
-                key_len = 13;
+                key_len = 12;
             }
             else if ((key_len == 2)  && !strncmp(key, "id", 2)) {
                 /* _id key not allowed */
@@ -1203,8 +1206,10 @@ flb_sds_t flb_msgpack_to_gelf(flb_sds_t *s, msgpack_object *o,
 
                 tmp = flb_msgpack_gelf_flatten (s, v,
                                                 prefix, prefix_len, FLB_FALSE);
-
-                if (tmp == NULL) return NULL;
+                if (tmp == NULL) {
+                    flb_free(prefix);
+                    return NULL;
+                }
                 *s = tmp;
                 flb_free(prefix);
 

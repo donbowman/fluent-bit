@@ -32,7 +32,6 @@
 #include <fluent-bit/flb_info.h>
 #include <fluent-bit/flb_bits.h>
 #include <fluent-bit/flb_io.h>
-#include <fluent-bit/flb_stats.h>
 #include <fluent-bit/flb_config.h>
 #include <fluent-bit/flb_network.h>
 #include <fluent-bit/flb_engine.h>
@@ -165,10 +164,6 @@ struct flb_output_instance {
      * nodes information that needs to be processed.
      */
     struct mk_list th_queue;
-
-#ifdef FLB_HAVE_STATS
-    int stats_fd;
-#endif
 
 #ifdef FLB_HAVE_TLS
     struct flb_tls tls;
@@ -350,7 +345,7 @@ struct flb_thread *flb_output_thread(struct flb_task *task,
     out_th->parent  = th;
 
     th->caller = co_active();
-    th->callee = co_create(FLB_THREAD_STACK_SIZE,
+    th->callee = co_create(config->coro_stack_size,
                            output_pre_cb_flush, &stack_size);
 
 #ifdef FLB_HAVE_VALGRIND

@@ -13,6 +13,8 @@ include(GNUInstallDirs)
 include(ExternalProject)
 include(cmake/FindJournald.cmake)
 include(cmake/FindMonkey.cmake)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
+find_package(Sanitizers)
 
 # Output paths
 set(FLB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -35,7 +37,6 @@ option(FLB_TLS                "Build with SSL/TLS support"    No)
 option(FLB_BINARY             "Build executable binary"      Yes)
 option(FLB_EXAMPLES           "Build examples"               Yes)
 option(FLB_SHARED_LIB         "Build shared library"         Yes)
-option(FLB_STATS              "Enable stats support"          No)
 option(FLB_VALGRIND           "Enable Valgrind support"       No)
 option(FLB_TRACE              "Enable trace mode"             No)
 option(FLB_TESTS_RUNTIME      "Enable runtime tests"          No)
@@ -49,7 +50,7 @@ option(FLB_HTTP_SERVER        "Enable HTTP Server"            No)
 option(FLB_BACKTRACE          "Enable stacktrace support"    Yes)
 option(FLB_LUAJIT             "Enable Lua Scripting support" Yes)
 option(FLB_STATIC_CONF        "Build binary using static configuration")
-option(FLB_SANITIZE_ADDRESS   "Enable address sanitizer"      No)
+option(FLB_CORO_STACK_SIZE    "Set coroutine stack size")
 
 # Metrics: Experimental Feature, disabled by default on 0.12 series
 # but enabled in the upcoming 0.13 release. Note that development
@@ -194,20 +195,9 @@ if(FLB_DEBUG)
   set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-# Find Sanitize Address if enabled
-if(FLB_SANITIZE_ADDRESS)
-  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
-  add_definitions(-DSANITIZE_ADDRESS=On)
-  find_package(Sanitizers)
-
-  # Note that this package don't define Sanitizers_FOUND:
-  # https://github.com/arsenm/sanitizers-cmake/issues/16
-  if (NOT DEFINED SANITIZE_LINK_STATIC)
-    message(FATAL_ERROR "CMake Sanitizer not found, update git submodules")
-  else()
-    FLB_DEFINITION(FLB_HAVE_SANITIZE_ADDRESS)
-    message(STATUS "Enabling address sanitizer")
-  endif()
+# Is sanitize_address defined ?
+if(SANITIZE_ADDRESS)
+  FLB_DEFINITION(FLB_HAVE_SANITIZE_ADDRESS)
 endif()
 
 # General Headers
@@ -305,10 +295,6 @@ if(FLB_TRACE)
   FLB_DEFINITION(FLB_HAVE_TRACE)
 endif()
 
-if(FLB_STATS)
-  FLB_DEFINITION(FLB_HAVE_STATS)
-endif()
-
 if(FLB_HTTP_SERVER)
   FLB_OPTION(FLB_METRICS ON)
   FLB_DEFINITION(FLB_HAVE_METRICS)
@@ -379,7 +365,16 @@ add_subdirectory(tools/xxd-c)
 
 # Static configuration generator (using xxd-c)
 if(FLB_STATIC_CONF)
+  FLB_DEFINITION(FLB_HAVE_STATIC_CONF)
   add_subdirectory(gen_static_conf)
+endif()
+
+# Special definition to set the coroutine stack size
+if(FLB_CORO_STACK_SIZE)
+  add_definitions(-DFLB_CORO_STACK_SIZE=${FLB_CORO_STACK_SIZE})
+  set(FLB_BUILD_FLAGS "${FLB_BUILD_FLAGS}#ifndef FLB_CORO_STACK_SIZE\n#define FLB_CORO_STACK_SIZE ${FLB_CORO_STACK_SIZE}\n#endif\n")
+else()
+
 endif()
 
 # TD Agent options

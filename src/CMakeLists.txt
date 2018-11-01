@@ -83,13 +83,6 @@ if(FLB_PROXY_GO)
     )
 endif()
 
-if(FLB_STATS)
-  set(src
-    ${src}
-    "flb_stats.c"
-    )
-endif()
-
 if(FLB_METRICS)
   set(src
     ${src}
@@ -151,6 +144,12 @@ if(FLB_SQLDB)
     "sqlite3")
 endif()
 
+if(FLB_STATIC_CONF)
+  set(src
+    ${src}
+    "flb_config_static.c"
+    )
+endif()
 
 include(CheckSymbolExists)
 check_symbol_exists(accept4 "sys/socket.h" HAVE_ACCEPT4)
@@ -211,9 +210,7 @@ set(FLB_DEPS
 # Shared Library
 if(FLB_SHARED_LIB)
   add_library(fluent-bit-shared SHARED ${src})
-  if(FLB_SANITIZE_ADDRESS)
-    add_sanitizers(fluent-bit-shared)
-  endif()
+  add_sanitizers(fluent-bit-shared)
   target_link_libraries(fluent-bit-shared ${FLB_DEPS} -lpthread)
   set_target_properties(fluent-bit-shared
     PROPERTIES OUTPUT_NAME fluent-bit)
@@ -224,9 +221,7 @@ endif()
 
 # Static Library
 add_library(fluent-bit-static STATIC ${src})
-if(FLB_SANITIZE_ADDRESS)
-  add_sanitizers(fluent-bit-static)
-endif()
+add_sanitizers(fluent-bit-static)
 target_link_libraries(fluent-bit-static ${FLB_DEPS})
 
 if(MSVC)
@@ -248,10 +243,7 @@ endif()
 if(FLB_BINARY)
   find_package (Threads)
   add_executable(fluent-bit-bin fluent-bit.c)
-
-  if(FLB_SANITIZE_ADDRESS)
-    add_sanitizers(fluent-bit-bin)
-  endif()
+  add_sanitizers(fluent-bit-bin)
 
   if(FLB_STATIC_CONF)
     add_dependencies(fluent-bit-bin flb-static-conf)
