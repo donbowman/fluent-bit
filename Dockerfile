@@ -35,7 +35,7 @@ RUN cmake -DFLB_DEBUG=Off \
           -DFLB_SHARED_LIB=Off \
           -DFLB_EXAMPLES=Off \
           -DFLB_HTTP_SERVER=On \
-          -DFLB_SYSTEMD=On \
+          -DFLB_IN_SYSTEMD=On \
           -DFLB_OUT_KAFKA=On ..
 
 RUN make -j $(getconf _NPROCESSORS_ONLN)
