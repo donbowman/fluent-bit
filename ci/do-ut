@@ -1,0 +1,73 @@
+#!/bin/bash
+
+nparallel=$(( $(getconf _NPROCESSORS_ONLN) > 8 ? 8 : $(getconf _NPROCESSORS_ONLN) ))
+echo "Run unit tests for $FLB_MEM on $nparallel VCPU"
+
+set -e
+cd build
+cmake -DFLB_ALL=On -DFLB_EXAMPLES=Off $FLB_MEM -DFLB_TESTS_INTERNAL=On -DFLB_TESTS_RUNTIME=On ../
+make -j $nparallel
+
+set +e
+
+SKIP_EXTERNAL="elasticsearch|out_td|out_forward"
+SKIP_BROKEN="filter_nest|filter_parser|in_disk|in_proc"
+
+export ipv6=1
+if [ "$(uname -s)" == "Linux" ]
+then
+    ip a |grep -q ::1
+    if [ $? -ne 0 ]
+    then
+        # Add an IPv6 config - see the corresponding Travis issue
+        # https://github.com/travis-ci/travis-ci/issues/8361
+        if [ $(cat /proc/sys/net/ipv6/conf/all/disable_ipv6) -eq 1 -a -x /usr/bin/sudo ]
+        then
+            sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+        else
+            export ipv6=0
+        fi
+    fi
+fi
+
+logit() {
+    res=$1
+    name=$(basename "$2")
+
+    [[ $res -eq 0 ]] && RES=PASS
+    [[ $res -eq 0 ]] || RES="FAIL ***"
+
+    printf "%-32s %s\n" $name $RES
+}
+
+rm -f tests.log
+
+echo "Run 'internal' tests"
+for i in $( ls bin/flb-it* | grep -v flb-it-network )
+do
+    echo "===== <<$(basename $i)>> ====="
+    if [ $i != bin/flb-it-network -o $ipv6 -eq 1 ]
+    then
+        $i
+        logit $? $i >> tests.log
+    else
+        build/bin/flb-it-network ipv4_client_server
+        logit $? build/bin/flb-it-network >> tests.log
+    fi
+done
+
+if [ "$(uname -s)" == "Linux" ]
+then
+    echo "Run select 'runtime' tests"
+    for i in $(ls bin/flb-rt* | egrep -v "$SKIP_EXTERNAL|$SKIP_BROKEN")
+    do
+        echo "===== <<$(basename $i)>> ====="
+        $i
+        logit $? $i >> tests.log
+    done
+fi
+echo "---- OVERALL RESULTS -----"
+cat tests.log
+echo ""
+grep -q FAIL tests.log && exit 1 || exit 0
+

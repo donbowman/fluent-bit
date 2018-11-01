@@ -1,47 +1,35 @@
 dist: trusty
-sudo: required
+sudo: true
 language: c
+
 compiler:
   - gcc
   - clang
-os:
-  - linux
-  - osx
-env:
-  - FLB_MEM="-DFLB_JEMALLOC=On"
-  - FLB_MEM="-DFLB_JEMALLOC=Off"
 
-notifications:
-  irc: "irc.freenode.net#fluent-bit"
+#env:
+#  - FLB_MEM="-DFLB_JEMALLOC=On"
+#  - FLB_MEM="-DFLB_JEMALLOC=Off"
+#  - DO_DOCKER=1
 
 before_script:
-  # Add an IPv6 config - see the corresponding Travis issue
-  # https://github.com/travis-ci/travis-ci/issues/8361
-  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'; fi
 
 matrix:
-  exclude:
-    - os: osx
+  include:
+    - os: linux
       env: FLB_MEM="-DFLB_JEMALLOC=On"
+    - os: linux
+      env: FLB_MEM="-DFLB_JEMALLOC=Off"
+    - os: osx
+      env: FLB_MEM="-DFLB_JEMALLOC=Off"
+    - os: linux
+      language: node_js
+        - "9"
+      compiler: gcc
+      env: DOCKER_BUILD=1
+      script: |
+        echo "===== BUILD DOCKER IMAGE ======="
+        docker build -t test-image -f Dockerfile .
+        npm install -g bats
 
 script: |
-    cd build
-    cmake -DFLB_ALL=On -DFLB_WITHOUT_EXAMPLES=On $FLB_FLUSH $FLB_MEM -DFLB_TESTS_INTERNAL=On -DFLB_TESTS_RUNTIME=On ../
-    make
-    SKIP_EXTERNAL="elasticsearch|out_td|out_forward"
-    SKIP_BROKEN="filter_nest|filter_parser|in_disk|in_proc"
-    echo "Run 'internal' tests for $FLB_MEM $FLB_FLUSH"
-    for i in bin/flb-it*
-    do
-      echo "===== <<$(basename $i)>> ====="
-      $i
-    done
-    if [ "${TRAVIS_OS_NAME}" == "linux" ]
-    then
-      echo "Run select 'runtime' tests for $FLB_MEM $FLB_FLUSH"
-      for i in $(ls bin/flb-rt* | egrep -v "$SKIP_EXTERNAL|$SKIP_BROKEN")
-      do
-        echo "===== <<$(basename $i)>> ====="
-        $i
-      done
-    fi
+    ci/do-ut
