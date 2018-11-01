@@ -604,12 +604,12 @@ int main(int argc, char **argv)
 #ifndef _WIN32
     /* Setup long-options */
     static const struct option long_opts[] = {
-        { "buf_path",    required_argument, NULL, 'b' },
-        { "buf_workers", required_argument, NULL, 'B' },
+        { "buf_path",        required_argument, NULL, 'b' },
+        { "buf_workers",     required_argument, NULL, 'B' },
 #ifdef FLB_HAVE_INOTIFY
-        { "config_watch",no_argument,       NULL, 'C' },
+        { "config_watch",    no_argument,       NULL, 'C' },
 #endif
-        { "config",      required_argument, NULL, 'c' },
+        { "config",          required_argument, NULL, 'c' },
 #ifdef FLB_HAVE_FORK
         { "daemon",          no_argument      , NULL, 'd' },
 #endif
