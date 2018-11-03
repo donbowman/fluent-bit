@@ -1,0 +1,146 @@
+{
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+        "creationTimestamp": "2018-10-24T21:01:47Z",
+        "generateName": "controller-c89674dbb-",
+        "labels": {
+            "k8s-app": "agilicus-controller",
+            "pod-template-hash": "745230866"
+        },
+        "name": "controller-c89674dbb-xvwmp",
+        "namespace": "agent",
+        "ownerReferences": [
+            {
+                "apiVersion": "apps/v1",
+                "blockOwnerDeletion": true,
+                "controller": true,
+                "kind": "ReplicaSet",
+                "name": "controller-c89674dbb",
+                "uid": "60d05627-d7c5-11e8-9641-0a58ac1f0a6f"
+            }
+        ],
+        "resourceVersion": "7387932",
+        "selfLink": "/api/v1/namespaces/agent/pods/controller-c89674dbb-xvwmp",
+        "uid": "04fe728e-d7d0-11e8-9641-0a58ac1f0a6f"
+    },
+    "spec": {
+        "containers": [
+            {
+                "env": [
+                    {
+                        "name": "RABBIT_HOST",
+                        "value": "agent-queue"
+                    }
+                ],
+                "image": "cr.agilicus.com/platform/l3-agent/controller:v0.1.6_3",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "controller",
+                "resources": {},
+                "securityContext": {
+                    "capabilities": {
+                        "drop": [
+                            "all"
+                        ]
+                    },
+                    "readOnlyRootFilesystem": true
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                    {
+                        "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount",
+                        "name": "agilicus-controller-service-account-token-psjbs",
+                        "readOnly": true
+                    }
+                ]
+            }
+        ],
+        "dnsPolicy": "ClusterFirst",
+        "imagePullSecrets": [
+            {
+                "name": "regcred"
+            }
+        ],
+        "nodeName": "aks-nodepool1-19254313-3",
+        "priority": 0,
+        "restartPolicy": "Always",
+        "schedulerName": "default-scheduler",
+        "securityContext": {},
+        "serviceAccount": "agilicus-controller-service-account",
+        "serviceAccountName": "agilicus-controller-service-account",
+        "terminationGracePeriodSeconds": 30,
+        "tolerations": [
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/not-ready",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            },
+            {
+                "effect": "NoExecute",
+                "key": "node.kubernetes.io/unreachable",
+                "operator": "Exists",
+                "tolerationSeconds": 300
+            }
+        ],
+        "volumes": [
+            {
+                "name": "agilicus-controller-service-account-token-psjbs",
+                "secret": {
+                    "defaultMode": 420,
+                    "secretName": "agilicus-controller-service-account-token-psjbs"
+                }
+            }
+        ]
+    },
+    "status": {
+        "conditions": [
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2018-10-24T21:01:47Z",
+                "status": "True",
+                "type": "Initialized"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2018-10-24T21:02:00Z",
+                "status": "True",
+                "type": "Ready"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": null,
+                "status": "True",
+                "type": "ContainersReady"
+            },
+            {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2018-10-24T21:01:47Z",
+                "status": "True",
+                "type": "PodScheduled"
+            }
+        ],
+        "containerStatuses": [
+            {
+                "containerID": "docker://a4923e8cd5fbc93f9b5b51d2c7928e71fa1fe7f38f56c25591deffa7e844bc28",
+                "image": "cr.agilicus.com/platform/l3-agent/controller:v0.1.6_3",
+                "imageID": "docker-pullable://cr.agilicus.com/platform/l3-agent/controller@sha256:b33b338bb775b3eee51a342144357ac4e62554cb2b08026bc92461d9de9d7692",
+                "lastState": {},
+                "name": "controller",
+                "ready": true,
+                "restartCount": 0,
+                "state": {
+                    "running": {
+                        "startedAt": "2018-10-24T21:02:00Z"
+                    }
+                }
+            }
+        ],
+        "hostIP": "10.240.0.7",
+        "phase": "Running",
+        "podIP": "10.244.3.21",
+        "qosClass": "BestEffort",
+        "startTime": "2018-10-24T21:01:47Z"
+    }
+}
