@@ -1,30 +1,37 @@
-dist: trusty
-sudo: true
+dist: xenial
 language: c
+# The leak sanitizer uses ptrace, which doesn't work under the
+# travis container infrastructure, so we enable 'sudo'
+sudo: true
+
+git:
+  depth: 3
 
 compiler:
   - gcc
   - clang
 
 env:
-  - PASS=1
-  - PASS=2
-#env:
-#  - FLB_MEM="-DFLB_JEMALLOC=On"
-#  - FLB_MEM="-DFLB_JEMALLOC=Off"
-#  - DO_DOCKER=1
+  - FLB_OPT="-DFLB_JEMALLOC=On"
+  - FLB_OPT="-DFLB_JEMALLOC=Off"
+  - FLB_OPT="-DSANITIZE_ADDRESS=On"
+  - FLB_OPT="-DSANITIZE_UNDEFINED=On"
+  - FLB_OPT="-DSANITIZE_MEMORY=On"
+
+# Many errors on this
+#  - FLB_OPT="-DSANITIZE_THREAD=On"
 
 before_script:
 
 matrix:
   include:
-    - os: linux
-      env: FLB_MEM="-DFLB_JEMALLOC=On"
-    - os: linux
-      env: FLB_MEM="-DFLB_JEMALLOC=Off"
     - os: osx
-      env: FLB_MEM="-DFLB_JEMALLOC=Off"
+      env: FLB_OPT="-DFLB_JEMALLOC=Off"
+      script: |
+        ci/do-ut || true
     - os: linux
+      dist: xenial
+      sudo: true
       language: node_js
         - "9"
       compiler: gcc
@@ -35,4 +42,14 @@ matrix:
         npm install -g bats
 
 script: |
-    ci/do-ut
+  echo "CC = $CC, CXX = $CXX"
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
+  sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+  ci/do-ut
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+      - g++-7
