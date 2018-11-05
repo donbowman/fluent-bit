@@ -230,6 +230,7 @@ enum conf_type {
 #endif /*FLB_HAVE_BUFFERING*/
 #define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
 
+#define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
 #define FLB_CONF_STR_CORO_STACK_SIZE "Coro_Stack_Size"
 
 #endif
