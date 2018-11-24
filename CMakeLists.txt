@@ -23,8 +23,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/library")
 
 # Fluent Bit Version
-set(FLB_VERSION_MAJOR  0)
-set(FLB_VERSION_MINOR 15)
+set(FLB_VERSION_MAJOR  1)
+set(FLB_VERSION_MINOR  0)
 set(FLB_VERSION_PATCH  0)
 set(FLB_VERSION_STR "${FLB_VERSION_MAJOR}.${FLB_VERSION_MINOR}.${FLB_VERSION_PATCH}")
 
@@ -205,7 +205,6 @@ include_directories(
   include/
   lib/
   lib/flb_libco
-  lib/sha1
   lib/msgpack-3.1.1/include
   lib/LuaJIT-2.1.0-beta3/src/
   ${MONKEY_INCLUDE_DIR}
@@ -234,10 +233,6 @@ add_subdirectory(lib/msgpack-3.1.1 EXCLUDE_FROM_ALL)
 FLB_DEFINITION(JSMN_PARENT_LINKS)
 FLB_DEFINITION(JSMN_STRICT)
 add_subdirectory(lib/jsmn)
-
-if(FLB_BUFFERING)
-  add_subdirectory(lib/sha1)
-endif()
 
 # Runtime Tests (filter_kubernetes) requires HTTP Server
 if(FLB_TESTS_RUNTIME)
