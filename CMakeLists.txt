@@ -24,7 +24,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/library")
 
 # Fluent Bit Version
 set(FLB_VERSION_MAJOR  1)
-set(FLB_VERSION_MINOR  0)
+set(FLB_VERSION_MINOR  1)
 set(FLB_VERSION_PATCH  0)
 set(FLB_VERSION_STR "${FLB_VERSION_MAJOR}.${FLB_VERSION_MINOR}.${FLB_VERSION_PATCH}")
 
@@ -75,57 +75,59 @@ option(FLB_PROXY_GO           "Enable Go plugins support"   Yes)
 # systems, but specific old-toolchains do not implement it.
 
 # Build-in Plugins
-option(FLB_IN_CPU          "Enable CPU input plugin"            Yes)
-option(FLB_IN_DISK         "Enable Disk input plugin"           Yes)
-option(FLB_IN_EXEC         "Enable Exec input plugin"           Yes)
-option(FLB_IN_FORWARD      "Enable Forward input plugin"        Yes)
-option(FLB_IN_HEALTH       "Enable Health input plugin"         Yes)
-option(FLB_IN_HTTP         "Enable HTTP input plugin"            No)
-option(FLB_IN_MEM          "Enable Memory input plugin"         Yes)
-option(FLB_IN_KMSG         "Enable Kernel log input plugin"     Yes)
-option(FLB_IN_LIB          "Enable library mode input plugin"   Yes)
-option(FLB_IN_RANDOM       "Enable random input plugin"         Yes)
-option(FLB_IN_SERIAL       "Enable Serial input plugin"         Yes)
-option(FLB_IN_STDIN        "Enable Standard input plugin"       Yes)
-option(FLB_IN_SYSLOG       "Enable Syslog input plugin"         Yes)
-option(FLB_IN_TAIL         "Enable Tail input plugin"           Yes)
-option(FLB_IN_TCP          "Enable TCP input plugin"            Yes)
-option(FLB_IN_MQTT         "Enable MQTT Broker input plugin"    Yes)
-option(FLB_IN_HEAD         "Enable Head input plugin"           Yes)
-option(FLB_IN_PROC         "Enable Process input plugin"        Yes)
-option(FLB_IN_SYSTEMD      "Enable Systemd input plugin"        Yes)
-option(FLB_IN_DUMMY        "Enable Dummy input plugin"          Yes)
-option(FLB_IN_NETIF        "Enable NetworkIF input plugin"      Yes)
-option(FLB_OUT_AZURE       "Enable Azure output plugin"         Yes)
-option(FLB_OUT_COUNTER     "Enable Counter output plugin"       Yes)
-option(FLB_OUT_ES          "Enable Elasticsearch output plugin" Yes)
-option(FLB_OUT_EXIT        "Enable Exit output plugin"          Yes)
-option(FLB_OUT_FORWARD     "Enable Forward output plugin"       Yes)
-option(FLB_OUT_GELF        "Enable GELF output plugin"          Yes)
-option(FLB_OUT_HTTP        "Enable HTTP output plugin"          Yes)
-option(FLB_OUT_INFLUXDB    "Enable InfluxDB output plugin"      Yes)
-option(FLB_OUT_NATS        "Enable NATS output plugin"          Yes)
-option(FLB_OUT_PLOT        "Enable Plot output plugin"          Yes)
-option(FLB_OUT_FILE        "Enable file output plugin"          Yes)
-option(FLB_OUT_TD          "Enable Treasure Data output plugin" Yes)
-option(FLB_OUT_RETRY       "Enable Retry test output plugin"     No)
-option(FLB_OUT_SPLUNK      "Enable Splunk output plugin"        Yes)
-option(FLB_OUT_STACKDRIVER "Enable Stackdriver output plugin"   Yes)
-option(FLB_OUT_STDOUT      "Enable STDOUT output plugin"        Yes)
-option(FLB_OUT_LIB         "Enable library mode output plugin"  Yes)
-option(FLB_OUT_NULL        "Enable dev null output plugin"      Yes)
-option(FLB_OUT_FLOWCOUNTER "Enable flowcount output plugin"     Yes)
-option(FLB_OUT_KAFKA       "Enable Kafka output plugin"          No)
-option(FLB_OUT_KAFKA_REST  "Enable Kafka Rest output plugin"    Yes)
-option(FLB_FILTER_GREP     "Enable grep filter"                 Yes)
-option(FLB_FILTER_MODIFY   "Enable modify filter"               Yes)
-option(FLB_FILTER_STDOUT   "Enable stdout filter"               Yes)
-option(FLB_FILTER_PARSER   "Enable parser filter"               Yes)
-option(FLB_FILTER_KUBERNETES "Enable kubernetes filter"         Yes)
-option(FLB_FILTER_THROTTLE "Enable throttle filter"             Yes)
-option(FLB_FILTER_RECORD_MODIFIER "Enable record_modifier filter" Yes)
-option(FLB_FILTER_NEST     "Enable nest filter"                   Yes)
-option(FLB_FILTER_LUA      "Enable Lua scripting filter"          Yes)
+option(FLB_IN_CPU             "Enable CPU input plugin"            Yes)
+option(FLB_IN_DISK            "Enable Disk input plugin"           Yes)
+option(FLB_IN_EXEC            "Enable Exec input plugin"           Yes)
+option(FLB_IN_FORWARD         "Enable Forward input plugin"        Yes)
+option(FLB_IN_HEALTH          "Enable Health input plugin"         Yes)
+option(FLB_IN_HTTP            "Enable HTTP input plugin"            No)
+option(FLB_IN_MEM             "Enable Memory input plugin"         Yes)
+option(FLB_IN_KMSG            "Enable Kernel log input plugin"     Yes)
+option(FLB_IN_LIB             "Enable library mode input plugin"   Yes)
+option(FLB_IN_RANDOM          "Enable random input plugin"         Yes)
+option(FLB_IN_SERIAL          "Enable Serial input plugin"         Yes)
+option(FLB_IN_STDIN           "Enable Standard input plugin"       Yes)
+option(FLB_IN_SYSLOG          "Enable Syslog input plugin"         Yes)
+option(FLB_IN_TAIL            "Enable Tail input plugin"           Yes)
+option(FLB_IN_TCP             "Enable TCP input plugin"            Yes)
+option(FLB_IN_MQTT            "Enable MQTT Broker input plugin"    Yes)
+option(FLB_IN_HEAD            "Enable Head input plugin"           Yes)
+option(FLB_IN_PROC            "Enable Process input plugin"        Yes)
+option(FLB_IN_SYSTEMD         "Enable Systemd input plugin"        Yes)
+option(FLB_IN_DUMMY           "Enable Dummy input plugin"          Yes)
+option(FLB_IN_NETIF           "Enable NetworkIF input plugin"      Yes)
+option(FLB_IN_STORAGE_BACKLOG "Enable stoage backlog input plugin" Yes)
+option(FLB_OUT_AZURE          "Enable Azure output plugin"         Yes)
+option(FLB_OUT_BIGQUERY       "Enable BigQuery output plugin"      Yes)
+option(FLB_OUT_COUNTER        "Enable Counter output plugin"       Yes)
+option(FLB_OUT_ES             "Enable Elasticsearch output plugin" Yes)
+option(FLB_OUT_EXIT           "Enable Exit output plugin"          Yes)
+option(FLB_OUT_FORWARD        "Enable Forward output plugin"       Yes)
+option(FLB_OUT_GELF           "Enable GELF output plugin"          Yes)
+option(FLB_OUT_HTTP           "Enable HTTP output plugin"          Yes)
+option(FLB_OUT_INFLUXDB       "Enable InfluxDB output plugin"      Yes)
+option(FLB_OUT_NATS           "Enable NATS output plugin"          Yes)
+option(FLB_OUT_PLOT           "Enable Plot output plugin"          Yes)
+option(FLB_OUT_FILE           "Enable file output plugin"          Yes)
+option(FLB_OUT_TD             "Enable Treasure Data output plugin" Yes)
+option(FLB_OUT_RETRY          "Enable Retry test output plugin"     No)
+option(FLB_OUT_SPLUNK         "Enable Splunk output plugin"        Yes)
+option(FLB_OUT_STACKDRIVER    "Enable Stackdriver output plugin"   Yes)
+option(FLB_OUT_STDOUT         "Enable STDOUT output plugin"        Yes)
+option(FLB_OUT_LIB            "Enable library mode output plugin"  Yes)
+option(FLB_OUT_NULL           "Enable dev null output plugin"      Yes)
+option(FLB_OUT_FLOWCOUNTER    "Enable flowcount output plugin"     Yes)
+option(FLB_OUT_KAFKA          "Enable Kafka output plugin"          No)
+option(FLB_OUT_KAFKA_REST     "Enable Kafka Rest output plugin"    Yes)
+option(FLB_FILTER_GREP        "Enable grep filter"                 Yes)
+option(FLB_FILTER_MODIFY      "Enable modify filter"               Yes)
+option(FLB_FILTER_STDOUT      "Enable stdout filter"               Yes)
+option(FLB_FILTER_PARSER      "Enable parser filter"               Yes)
+option(FLB_FILTER_KUBERNETES  "Enable kubernetes filter"           Yes)
+option(FLB_FILTER_THROTTLE    "Enable throttle filter"             Yes)
+option(FLB_FILTER_NEST        "Enable nest filter"                 Yes)
+option(FLB_FILTER_LUA         "Enable Lua scripting filter"        Yes)
+option(FLB_FILTER_RECORD_MODIFIER "Enable record_modifier filter"  Yes)
 
 # Enable all features
 if(FLB_ALL)
@@ -273,8 +275,8 @@ if(FLB_TLS)
   option(ENABLE_TESTING  OFF)
   option(ENABLE_PROGRAMS OFF)
   option(INSTALL_MBEDTLS_HEADERS OFF)
-  add_subdirectory(lib/mbedtls-2.13.0 EXCLUDE_FROM_ALL)
-  include_directories(lib/mbedtls-2.13.0/include)
+  add_subdirectory(lib/mbedtls-2.14.1 EXCLUDE_FROM_ALL)
+  include_directories(lib/mbedtls-2.14.1/include)
 endif()
 
 # Metrics
@@ -361,6 +363,21 @@ if(FLB_HAVE_TIMESPEC_GET)
   FLB_DEFINITION(FLB_HAVE_TIMESPEC_GET)
 endif()
 
+# clock_get_time() support for macOS.
+check_c_source_compiles("
+  #include <mach/clock.h>
+  #include <mach/mach.h>
+  int main() {
+      clock_serv_t cclock;
+      mach_timespec_t mts;
+      host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+      clock_get_time(cclock, &mts);
+      return mach_port_deallocate(mach_task_self(), cclock);
+  }" FLB_HAVE_CLOCK_GET_TIME)
+if(FLB_HAVE_CLOCK_GET_TIME)
+  FLB_DEFINITION(FLB_HAVE_CLOCK_GET_TIME)
+endif()
+
 # Build tools/xxd-c
 add_subdirectory(tools/xxd-c)
 
@@ -412,8 +429,8 @@ if(FLB_JEMALLOC AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
   # Link to Jemalloc as an external dependency
   ExternalProject_Add(jemalloc
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/jemalloc
-    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/lib/jemalloc/configure ${AUTOCONF_HOST_OPT} --with-lg-quantum=3 --enable-cc-silence --prefix=<INSTALL_DIR>
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/jemalloc-5.1.0
+    CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/lib/jemalloc-5.1.0/configure ${AUTOCONF_HOST_OPT} --with-lg-quantum=3 --enable-cc-silence --prefix=<INSTALL_DIR>
     CFLAGS=-std=gnu99\ -Wall\ -pipe\ -g3\ -O3\ -funroll-loops
     BUILD_COMMAND $(MAKE)
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/

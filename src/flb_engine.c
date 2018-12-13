@@ -59,7 +59,7 @@ int flb_engine_destroy_tasks(struct mk_list *tasks)
 
     mk_list_foreach_safe(head, tmp, tasks) {
         task = mk_list_entry(head, struct flb_task, _head);
-        flb_task_destroy(task);
+        flb_task_destroy(task, FLB_FALSE);
         c++;
     }
 
@@ -156,7 +156,7 @@ static inline int flb_engine_manager(flb_pipefd_t fd, struct flb_config *config)
             flb_task_retry_clean(task, out_th->parent);
             flb_output_thread_destroy_id(thread_id, task);
             if (task->users == 0 && mk_list_size(&task->retries) == 0) {
-                flb_task_destroy(task);
+                flb_task_destroy(task, FLB_TRUE);
             }
         }
         else if (ret == FLB_RETRY) {
@@ -182,7 +182,7 @@ static inline int flb_engine_manager(flb_pipefd_t fd, struct flb_config *config)
 
                 flb_output_thread_destroy_id(thread_id, task);
                 if (task->users == 0 && mk_list_size(&task->retries) == 0) {
-                    flb_task_destroy(task);
+                    flb_task_destroy(task, FLB_TRUE);
                 }
 
                 return 0;
@@ -209,7 +209,7 @@ static inline int flb_engine_manager(flb_pipefd_t fd, struct flb_config *config)
                          task->id);
                 flb_task_retry_destroy(retry);
                 if (task->users == 0 && mk_list_size(&task->retries) == 0) {
-                    flb_task_destroy(task);
+                    flb_task_destroy(task, FLB_TRUE);
                 }
             }
             else {
@@ -220,7 +220,7 @@ static inline int flb_engine_manager(flb_pipefd_t fd, struct flb_config *config)
         else if (ret == FLB_ERROR) {
             flb_output_thread_destroy_id(thread_id, task);
             if (task->users == 0 && mk_list_size(&task->retries) == 0) {
-                flb_task_destroy(task);
+                flb_task_destroy(task, FLB_TRUE);
             }
         }
     }

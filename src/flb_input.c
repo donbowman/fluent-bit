@@ -31,6 +31,7 @@
 #include <fluent-bit/flb_utils.h>
 #include <fluent-bit/flb_engine.h>
 #include <fluent-bit/flb_metrics.h>
+#include <fluent-bit/flb_storage.h>
 
 #define protcmp(a, b)  strncasecmp(a, b, strlen(a))
 
@@ -85,7 +86,8 @@ static int collector_id(struct flb_input_instance *in)
 
 /* Create an input plugin instance */
 struct flb_input_instance *flb_input_new(struct flb_config *config,
-                                         char *input, void *data)
+                                         char *input, void *data,
+                                         int public_only)
 {
     int id;
     int ret;
@@ -104,6 +106,14 @@ struct flb_input_instance *flb_input_new(struct flb_config *config,
             continue;
         }
 
+        /*
+         * Check if the plugin is private and validate the 'public_only'
+         * requirement.
+         */
+        if (public_only == FLB_TRUE && plugin->flags & FLB_INPUT_PRIVATE) {
+            return NULL;
+        }
+
         /* Create plugin instance */
         instance = flb_malloc(sizeof(struct flb_input_instance));
         if (!instance) {
@@ -119,6 +129,7 @@ struct flb_input_instance *flb_input_new(struct flb_config *config,
         snprintf(instance->name, sizeof(instance->name) - 1,
                  "%s.%i", plugin->name, id);
 
+        instance->alias    = NULL;
         instance->id       = id;
         instance->flags    = plugin->flags;
         instance->p        = plugin;
@@ -162,14 +173,6 @@ struct flb_input_instance *flb_input_new(struct flb_config *config,
         instance->mem_buf_limit = 0;
         instance->mem_chunks_size = 0;
 
-        /* Metrics */
-#ifdef FLB_HAVE_METRICS
-        instance->metrics = flb_metrics_create(instance->name);
-        if (instance->metrics) {
-            flb_metrics_add(FLB_METRIC_N_RECORDS, "records", instance->metrics);
-            flb_metrics_add(FLB_METRIC_N_BYTES, "bytes", instance->metrics);
-        }
-#endif
         mk_list_add(&instance->_head, &config->inputs);
     }
 
@@ -210,6 +213,9 @@ int flb_input_set_property(struct flb_input_instance *in, char *k, char *v)
     if (prop_key_check("tag", k, len) == 0 && tmp) {
         in->tag     = tmp;
         in->tag_len = strlen(tmp);
+    }
+    else if (prop_key_check("alias", k, len) == 0 && tmp) {
+        in->alias = tmp;
     }
     else if (prop_key_check("mem_buf_limit", k, len) == 0 && tmp) {
         limit = flb_utils_size_to_bytes(tmp);
@@ -258,11 +264,26 @@ char *flb_input_get_property(char *key, struct flb_input_instance *i)
     return flb_config_prop_get(key, &i->properties);
 }
 
+/* Return an instance name or alias */
+char *flb_input_name(struct flb_input_instance *in)
+{
+    if (in->alias) {
+        return in->alias;
+    }
+
+    return in->name;
+}
+
 static void flb_input_free(struct flb_input_instance *in)
 {
     struct mk_list *head_prop;
     struct flb_config_prop *prop;
     struct mk_list *tmp_prop;
+
+    if (in->alias) {
+        flb_free(in->alias);
+    }
+
     /* Remove URI context */
     if (in->host.uri) {
         flb_uri_destroy(in->host.uri);
@@ -295,7 +316,7 @@ static void flb_input_free(struct flb_input_instance *in)
 #endif
 
     if (in->storage) {
-        flb_input_storage_destroy(in);
+        flb_storage_input_destroy(in);
     }
 
     /* Unlink and release */
@@ -307,6 +328,7 @@ static void flb_input_free(struct flb_input_instance *in)
 void flb_input_initialize_all(struct flb_config *config)
 {
     int ret;
+    char *name;
     struct mk_list *tmp;
     struct mk_list *head;
     struct flb_input_instance *in;
@@ -324,6 +346,19 @@ void flb_input_initialize_all(struct flb_config *config)
         if (!p) {
             continue;
         }
+
+        /* Metrics */
+#ifdef FLB_HAVE_METRICS
+        /* Get name or alias for the instance */
+        name = flb_input_name(in);
+
+        /* Create the metrics context */
+        in->metrics = flb_metrics_create(name);
+        if (in->metrics) {
+            flb_metrics_add(FLB_METRIC_N_RECORDS, "records", in->metrics);
+            flb_metrics_add(FLB_METRIC_N_BYTES, "bytes", in->metrics);
+        }
+#endif
 
         /* Initialize the input */
         if (p->cb_init) {

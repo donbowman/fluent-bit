@@ -158,8 +158,10 @@ struct flb_config {
     /* Chunk I/O Buffering */
     void *cio;
     char *storage_path;
-    char *storage_sync;
-    int   storage_checksum;
+    void *storage_input_plugin;
+    char *storage_sync;             /* sync mode */
+    int   storage_checksum;         /* checksum enabled */
+    char *storage_bl_mem_limit;     /* storage backlog memory limit */
 
     /* Embedded SQL Database support (SQLite3) */
 #ifdef FLB_HAVE_SQLDB
@@ -227,9 +229,10 @@ enum conf_type {
 #define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
 
 /* Storage / Chunk I/O */
-#define FLB_CONF_STORAGE_PATH        "storage.path"
-#define FLB_CONF_STORAGE_SYNC        "storage.sync"
-#define FLB_CONF_STORAGE_CHECKSUM    "storage.checksum"
+#define FLB_CONF_STORAGE_PATH          "storage.path"
+#define FLB_CONF_STORAGE_SYNC          "storage.sync"
+#define FLB_CONF_STORAGE_CHECKSUM      "storage.checksum"
+#define FLB_CONF_STORAGE_BL_MEM_LIMIT  "storage.backlog.mem_limit"
 
 #define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
 
