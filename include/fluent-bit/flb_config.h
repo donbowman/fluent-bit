@@ -234,8 +234,6 @@ enum conf_type {
 #define FLB_CONF_STORAGE_CHECKSUM      "storage.checksum"
 #define FLB_CONF_STORAGE_BL_MEM_LIMIT  "storage.backlog.mem_limit"
 
-#define FLB_CONF_STR_CONFIG_WATCH    "Config_Watch"
-
 /* Coroutines */
 #define FLB_CONF_STR_CORO_STACK_SIZE "Coro_Stack_Size"
 
