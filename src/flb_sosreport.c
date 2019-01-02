@@ -17,6 +17,7 @@
  *  limitations under the License.
  */
 
+#include <fluent-bit/flb_compat.h>
 #include <fluent-bit/flb_info.h>
 #include <fluent-bit/flb_config.h>
 #include <fluent-bit/flb_input.h>
@@ -26,7 +27,6 @@
 #include <fluent-bit/flb_version.h>
 #include <fluent-bit/flb_utils.h>
 
-#include <unistd.h>
 #include <sys/utsname.h>
 
 static void print_key(char *key)
@@ -179,7 +179,7 @@ int flb_sosreport(struct flb_config *config)
 
     /* Config: [SERVER] */
     printf("[SERVER] Runtime configuration\n");
-    printf("    Flush\t\t%i\n", config->flush);
+    printf("    Flush\t\t%f\n", config->flush);
     printf("    Daemon\t\t%s\n", config->daemon ? "On": "Off");
     printf("    Log_Level\t\t%s\n", log_level(config->verbose));
     printf("\n");

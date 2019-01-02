@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(fluent-bit)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Update CFLAGS
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fPIC ")
+if (MSVC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+else()
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+endif()
+
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
 else()
@@ -376,6 +383,20 @@ check_c_source_compiles("
   }" FLB_HAVE_CLOCK_GET_TIME)
 if(FLB_HAVE_CLOCK_GET_TIME)
   FLB_DEFINITION(FLB_HAVE_CLOCK_GET_TIME)
+endif()
+
+# unix socket support
+check_c_source_compiles("
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  int main() {
+      int sock;
+      sock = socket(AF_UNIX, SOCK_STREAM, 0);
+      close(sock);
+      return 0;
+  }" FLB_HAVE_UNIX_SOCKET)
+if(FLB_HAVE_UNIX_SOCKET)
+  FLB_DEFINITION(FLB_HAVE_UNIX_SOCKET)
 endif()
 
 # Build tools/xxd-c

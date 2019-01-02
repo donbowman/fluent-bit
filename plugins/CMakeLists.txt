@@ -77,7 +77,6 @@ endmacro()
 
 # FLB_PLUGIN: used by plugins to perform registration and linking
 macro(FLB_PLUGIN name src deps)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
   add_library(flb-plugin-${name} STATIC ${src})
   add_sanitizers(flb-plugin-${name})
   target_link_libraries(flb-plugin-${name} fluent-bit-static msgpackc-static ${deps})
@@ -158,6 +157,8 @@ REGISTER_FILTER_PLUGIN("filter_throttle")
 if(FLB_REGEX)
   REGISTER_FILTER_PLUGIN("filter_kubernetes")
   REGISTER_FILTER_PLUGIN("filter_parser")
+  REGISTER_FILTER_PLUGIN("filter_nest")
+  REGISTER_FILTER_PLUGIN("filter_modify")
 endif()
 
 if(FLB_LUAJIT)
@@ -165,8 +166,6 @@ if(FLB_LUAJIT)
 endif()
 
 REGISTER_FILTER_PLUGIN("filter_record_modifier")
-REGISTER_FILTER_PLUGIN("filter_nest")
-REGISTER_FILTER_PLUGIN("filter_modify")
 
 # Register external input and output plugins
 if(EXT_IN_PLUGINS)

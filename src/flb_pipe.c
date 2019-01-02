@@ -36,6 +36,7 @@
  * is not a socket.
  */
 
+#include <fluent-bit/flb_compat.h>
 #include <fluent-bit/flb_pipe.h>
 #include <fluent-bit/flb_log.h>
 
@@ -73,7 +74,6 @@ int flb_pipe_close(flb_pipefd_t fd)
 #else
 /* All other flavors of Unix/BSD are OK */
 
-#include <unistd.h>
 #include <stdint.h>
 
 int flb_pipe_create(flb_pipefd_t pipefd[2])
@@ -101,7 +101,7 @@ ssize_t flb_pipe_read_all(int fd, void *buf, size_t count)
     size_t total = 0;
 
     do {
-        bytes = flb_pipe_r(fd, buf + total, count - total);
+        bytes = flb_pipe_r(fd, (char *) buf + total, count - total);
         if (bytes == -1) {
             if (errno == EAGAIN) {
                 /*
@@ -132,7 +132,7 @@ ssize_t flb_pipe_write_all(int fd, void *buf, size_t count)
     size_t total = 0;
 
     do {
-        bytes = flb_pipe_w(fd, buf + total, count - total);
+        bytes = flb_pipe_w(fd, (const char *) buf + total, count - total);
         if (bytes == -1) {
             if (errno == EAGAIN) {
                 /*
