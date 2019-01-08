@@ -2,6 +2,7 @@
 
 /*  Fluent Bit
  *  ==========
+ *  Copyright (C) 2019      The Fluent Bit Authors
  *  Copyright (C) 2015-2018 Treasure Data Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -109,7 +110,7 @@ ssize_t flb_pipe_read_all(int fd, void *buf, size_t count)
                  * return until all data have been read, just sleep a little
                  * bit (0.05 seconds)
                  */
-                usleep(50000);
+                flb_time_msleep(50);
                 continue;
             }
         }
@@ -140,7 +141,7 @@ ssize_t flb_pipe_write_all(int fd, void *buf, size_t count)
                  * return until all data have been read, just sleep a little
                  * bit (0.05 seconds)
                  */
-                usleep(50000);
+                flb_time_msleep(50);
                 continue;
             }
         }

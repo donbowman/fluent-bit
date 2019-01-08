@@ -2,6 +2,7 @@
 
 /*  Fluent Bit
  *  ==========
+ *  Copyright (C) 2019      The Fluent Bit Authors
  *  Copyright (C) 2015-2018 Treasure Data Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -271,7 +272,9 @@ struct flb_output_instance *flb_output_new(struct flb_config *config,
     instance->data        = data;
     instance->upstream    = NULL;
     instance->match       = NULL;
+#ifdef FLB_HAVE_REGEX
     instance->match_regex = NULL;
+#endif
     instance->retry_limit = 1;
     instance->host.name   = NULL;
 
