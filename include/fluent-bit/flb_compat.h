@@ -31,6 +31,21 @@
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <windows.h>
+
+static inline int getpagesize(void)
+{
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
+    return info.dwPageSize;
+}
+
+static inline struct tm *gmtime_r(const time_t *timep, struct tm *result)
+{
+    if (gmtime_s(result, timep))
+        return NULL;
+    return result;
+}
+
 #else
 #include <netdb.h>
 #include <netinet/in.h>
