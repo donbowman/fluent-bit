@@ -252,13 +252,14 @@ void flb_config_exit(struct flb_config *config)
     /* Collectors */
     mk_list_foreach_safe(head, tmp, &config->collectors) {
         collector = mk_list_entry(head, struct flb_input_collector, _head);
-        mk_event_del(config->evl, &collector->event);
 
         if (collector->type == FLB_COLLECT_TIME) {
             mk_event_timeout_destroy(config->evl, &collector->event);
             if (collector->fd_timer > 0) {
                 close(collector->fd_timer);
             }
+        } else {
+            mk_event_del(config->evl, &collector->event);
         }
 
         mk_list_del(&collector->_head);
@@ -397,7 +398,7 @@ int flb_config_set_property(struct flb_config *config,
                 }
             }
             else if (!strncasecmp(key, FLB_CONF_STR_PARSERS_FILE, 32)) {
-#ifdef FLB_HAVE_REGEX
+#ifdef FLB_HAVE_PARSER
                 tmp = flb_env_var_translate(config->env, v);
                 ret = flb_parser_conf_file(tmp, config);
                 flb_free(tmp);
