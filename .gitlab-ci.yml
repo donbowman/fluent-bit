@@ -87,14 +87,19 @@ build:
       [ -S /var/run/docker.sock ] && unset DOCKER_HOST
       docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
       docker build --tag $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME .
+      docker build --tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug .
       clairctl analyze --log-level debug $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
       echo Generate JSON report
       clairctl report -f json $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
       echo Generate HTML report
       clairctl report -f html $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
       docker push $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME
+      docker push $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug
       if [ "$CI_COMMIT_REF_NAME" = "integration" ];
       then
         docker tag $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME $CONTAINER_IMAGE:latest
         docker push $CONTAINER_IMAGE:latest
+
+        docker tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug $CONTAINER_IMAGE:latest_debug
+        docker push $CONTAINER_IMAGE:latest_debug
       fi
