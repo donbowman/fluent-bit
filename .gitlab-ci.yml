@@ -87,7 +87,7 @@ build:
       [ -S /var/run/docker.sock ] && unset DOCKER_HOST
       docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
       docker build --tag $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME .
-      docker build --tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug .
+      docker build --tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug -f Dockerfile.debug .
       clairctl analyze --log-level debug $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
       echo Generate JSON report
       clairctl report -f json $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
