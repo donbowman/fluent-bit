@@ -86,20 +86,25 @@ build:
       [ -S /var/run/docker.sock ] || export DOCKER_HOST=tcp://localhost:2375
       [ -S /var/run/docker.sock ] && unset DOCKER_HOST
       docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-      docker build --tag $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME .
-      docker build --tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug -f Dockerfile.debug .
-      clairctl analyze --log-level debug $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
+      [ -n "$CI_COMMIT_TAG" ] && TAG="$CI_COMMIT_TAG" || TAG="$CI_COMMIT_REF_NAME"
+
+      docker build --tag $CONTAINER_IMAGE:$TAG .
+      # This is needed to force the _debug container to come from what we just build
+      docker tag $CONTAINER_IMAGE:${TAG} fluent/fluent-bit:latest
+      docker build --tag $CONTAINER_IMAGE:${TAG}_debug -f Dockerfile.debug .
+
+      clairctl analyze --log-level debug $CONTAINER_IMAGE:${TAG} || true
       echo Generate JSON report
-      clairctl report -f json $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
+      clairctl report -f json $CONTAINER_IMAGE:${TAG} || true
       echo Generate HTML report
-      clairctl report -f html $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME || true
-      docker push $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME
-      docker push $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug
+      clairctl report -f html $CONTAINER_IMAGE:${TAG} || true
+      docker push $CONTAINER_IMAGE:${TAG}
+      docker push $CONTAINER_IMAGE:${TAG}_debug
       if [ "$CI_COMMIT_REF_NAME" = "integration" ];
       then
-        docker tag $CONTAINER_IMAGE:$CI_COMMIT_REF_NAME $CONTAINER_IMAGE:latest
+        docker tag $CONTAINER_IMAGE:${TAG} $CONTAINER_IMAGE:latest
         docker push $CONTAINER_IMAGE:latest
 
-        docker tag $CONTAINER_IMAGE:${CI_COMMIT_REF_NAME}_debug $CONTAINER_IMAGE:latest_debug
+        docker tag $CONTAINER_IMAGE:${TAG}_debug $CONTAINER_IMAGE:latest_debug
         docker push $CONTAINER_IMAGE:latest_debug
       fi
