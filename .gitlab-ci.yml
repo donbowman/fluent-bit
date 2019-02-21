@@ -16,24 +16,32 @@ test-gcc:
   stage: test
   script: |
       CC=gcc FLB_OPT="-DFLB_JEMALLOC=On" ci/do-ut
+  tags:
+    - big
 
 test-clang:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=clang FLB_OPT="-DFLB_JEMALLOC=On" ci/do-ut
+  tags:
+    - big
 
 asan-gcc:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=gcc FLB_OPT="-DFLB_SANITIZE_ADDRESS=On" ci/do-ut
+  tags:
+    - big
 
 asan-clang:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=clang FLB_OPT="-DFLB_SANITIZE_ADDRESS=On" ci/do-ut
+  tags:
+    - big
 
 # This is currently not 'voting' since there are some false-positives
 tsan-gcc:
@@ -41,36 +49,48 @@ tsan-gcc:
   stage: test
   script: |
       CC=gcc FLB_OPT="-DFLB_SANITIZE_THREAD=On" ci/do-ut || true
+  tags:
+    - big
 
 tsan-clang:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=clang FLB_OPT="-DFLB_SANITIZE_THREAD=On" ci/do-ut || true
+  tags:
+    - big
 
 msan-gcc:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=gcc FLB_OPT="-DFLB_SANITIZE_MEMORY=On" ci/do-ut
+  tags:
+    - big
 
 msan-clang:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=clang FLB_OPT="-DFLB_SANITIZE_MEMORY=On" ci/do-ut
+  tags:
+    - big
 
 usan-gcc:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=gcc FLB_OPT="-DFLB_SANITIZE_UNDEFINED=On" ci/do-ut
+  tags:
+    - big
 
 usan:
   image: cr.agilicus.com/corp-tools/build-containers/base
   stage: test
   script: |
       CC=clang FLB_OPT="-DFLB_SANITIZE_UNDEFINED=On" ci/do-ut
+  tags:
+    - big
 
 build:
   image: cr.agilicus.com/corp-tools/docker-compose
@@ -108,3 +128,5 @@ build:
         docker tag $CONTAINER_IMAGE:${TAG}_debug $CONTAINER_IMAGE:latest_debug
         docker push $CONTAINER_IMAGE:latest_debug
       fi
+  tags:
+    - big
