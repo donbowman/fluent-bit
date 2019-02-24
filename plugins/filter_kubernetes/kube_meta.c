@@ -351,13 +351,13 @@ static void extract_container_hash(struct flb_kube_meta *meta,
                     }
                 }
                 if (name_found) {
-                    if (container_hash_len) {
+                    if (container_hash_len && !meta->container_hash_len) {
                         meta->container_hash_len = container_hash_len;
                         meta->container_hash = flb_strndup(container_hash,
                                                            container_hash_len);
                         meta->skip++;
                     }
-                    if (docker_id_len) {
+                    if (docker_id_len && !meta->docker_id_len) {
                         meta->docker_id_len = docker_id_len;
                         meta->docker_id = flb_strndup(docker_id, docker_id_len);
                         meta->skip++;
